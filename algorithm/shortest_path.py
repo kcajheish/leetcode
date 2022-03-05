@@ -117,5 +117,53 @@ assert distances == [0, 1, 1]
 
 
 class FloydWarshall:
-    def shortest_path(self, edges, n, source):
-        pass
+    """
+    given start and end point, pick an intermediate point that can shorten the path between them
+
+    time complexity: O(n^3)
+
+    easy to implement, but note that use it when graph is small enough that this algo runs fast enough
+    """
+    def shortest_path(self, adj, n, source):
+        distance = self.build_distance_matrix(adj, n)
+        for mid in range(n):
+            for start in range(n):
+                for end in range(n):
+                    distance[start][end] = min(
+                        distance[start][end], distance[start][mid] + distance[mid][end]
+                    )
+        return distance[source]
+
+    def build_distance_matrix(self, adj, n):
+        matrix = [
+            [float('inf')] * n
+                for _ in range(n)
+        ]
+        for row in range(n):
+            for col in range(n):
+                if row == col:
+                    matrix[row][col] = 0
+                elif adj[row][col] != 0:
+                    matrix[row][col] = adj[row][col]
+        return matrix
+"""
+    1       7
+(0) - > (1) -> (2)
+ \       |      /
+ 5\     1|     /5
+   \     v    /
+    >   (3)  <
+"""
+# adjacency matrix: store edges in 2d matrix, which is useful for read,
+# but it consumes lots of memory if graph is big.
+adj = [
+    [0, 1, 0, 5],
+    [0, 0, 7, 1],
+    [0, 0, 0, 5],
+    [0, 0, 0, 0]
+]
+n = 4
+source = 0
+fw = FloydWarshall()
+shortest = fw.shortest_path(adj, n, source)
+assert shortest == [0, 1, 8, 2]

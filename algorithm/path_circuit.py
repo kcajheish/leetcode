@@ -82,6 +82,46 @@ class TestEulerianCycle(unittest.TestCase):
         ec.add_edge(2, 4)
         self.assertRaises(Exception, ec.eulerian)
 
+class Hamiltonian:
+    def check_path(self, V, edges):
+        graph = self.build_graph(edges)
+        seen = [False for i in range(V)]
+        for i in range(V):
+            path = []
+            if self.dfs(graph, i, seen, 0, V, path):
+                # print('hamiltonian path:', path)
+                return True
+        return False
 
+    def dfs(self, graph, node, seen, num, V, path):
+        path += [node]
+        seen[node] = True
+        num += 1
+        if num == V:
+            return True
+
+        for next_node in graph[node]:
+            if not seen[next_node]:
+                if self.dfs(graph, next_node, seen, num, V, path):
+                    return True
+        seen[node] = False
+        path.pop()
+        return False
+
+    def build_graph(self, edges):
+        g = defaultdict(list)
+        for u, v in edges:
+            g[u].append(v)
+            g[v].append(u)
+        return g
+
+h = Hamiltonian()
+N = 4
+edges =  [ (0,1), (1,2), (2,3), (1,3)]
+assert h.check_path(N, edges) == True
+
+N = 4
+edges = [(0,1), (1,2), (1,3)]
+assert h.check_path(N, edges) == False
 if __name__ == '__main__':
     unittest.main()

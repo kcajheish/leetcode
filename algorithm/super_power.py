@@ -29,9 +29,9 @@ def greatest_power(power):
                 if result[i][k] and result[j][k]:
                     break
                 elif result[i][k]:
-                    a += 1
+                    a += result[i][k]
                 elif result[j][k]:
-                    b += 1
+                    b += result[i][k]
             if a or b:
                 largest = max(largest, a*b)
     return 0 if largest == -1 else largest
